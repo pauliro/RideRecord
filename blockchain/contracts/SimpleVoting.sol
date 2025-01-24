@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.24;
 
 contract SimpleVoting {
     uint256 public numChoices;
@@ -10,7 +10,7 @@ contract SimpleVoting {
     event Voted(address indexed voter, uint256 choice, int8 quantity);
 
     constructor(uint256 _numChoices) {
-        require(_numChoices > 0, "Number of choices must be greater than zero");
+        require(_numChoices > 0, "Number of choices must be > zero");
         numChoices = _numChoices;
         voteCounts = new uint256[](numChoices); // Initialize vote counts
     }
