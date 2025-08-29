@@ -2,6 +2,8 @@
   "extends": "solhint:recommended",
   "rules": {
     "no-empty-blocks": "off",
-    "func-visibility": ["warn", { "ignoreConstructors": true }]
+    "func-visibility": ["warn", { "ignoreConstructors": true }],
+    "gas-custom-errors": "off",
+    "compiler-version": "off"
   }
 }

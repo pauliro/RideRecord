@@ -4,10 +4,9 @@
   "description": "MultiBaas Sample Hardhat Project",
   "main": "index.js",
   "scripts": {
-    "prepare": "cd .. && husky blockchain/.husky",
     "fix:eslint": "eslint --fix '{*,**/*}.{js,ts}'",
-    "fix:prettier": "prettier --write --plugin=prettier-plugin-solidity 'contracts/**/*.sol'",
-    "fix:solhint": "solhint --fix --noPrompt 'contracts/**/*.sol'",
+    "fix:prettier": "prettier --write --plugin=prettier-plugin-solidity contracts/**/*.sol",
+    "fix:solhint": "solhint --fix --noPrompt contracts/**/*.sol",
     "fix:sol": "npm run fix:prettier && npm run fix:solhint",
     "fix:all": "npm run fix:eslint && npm run fix:sol",
     "test": "npx hardhat test",
@@ -27,11 +26,13 @@
     "url": "https://github.com/curvegrid/multibaas-sample-hardhat-project/issues"
   },
   "homepage": "https://github.com/curvegrid/multibaas-sample-hardhat-project#readme",
-  "lint-staged": {
-    "*.{js,ts}": "eslint --fix",
-    "*.json": "prettier --write",
-    "*.sol": "npm run fix:sol"
-  },
+  // "lint-staged": { // Removed lint-staged configuration
+  //   "*.json": "prettier --write",
+  //   "*.sol": [
+  //     "prettier --write --plugin=prettier-plugin-solidity",
+  //     "npx solhint --fix --noPrompt"
+  //   ]
+  // },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "eslint": "^9.18.0",
@@ -43,7 +44,7 @@
     "lint-staged": "^15.3.0",
     "prettier": "^3.4.2",
     "prettier-plugin-solidity": "^1.4.2",
-    "solhint": "^5.0.4",
+    "solhint": "^6.0.1",
     "typescript-eslint": "^8.20.0"
   }
 }

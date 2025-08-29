@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.24;
+
+error VehicleAlreadyRegistered(bytes32 serialHash);
+error OnlyOwnerCanTransfer(bytes32 serialHash, address currentOwner, address caller);
+error CannotTransferToZeroAddress(bytes32 serialHash);
 
 contract RideRecords {
     // Mapping from the hashed vehicle serial number to its current owner
@@ -23,7 +27,9 @@ contract RideRecords {
      * @param serialHash The keccak256 hash of the vehicle's VIN/serial number.
      */
     function registerVehicle(bytes32 serialHash) public {
-        require(vehicleOwners[serialHash] == address(0), "Vehicle already registered");
+        if (vehicleOwners[serialHash] != address(0)) {
+            revert VehicleAlreadyRegistered(serialHash);
+        }
         vehicleOwners[serialHash] = msg.sender;
         emit VehicleRegistered(serialHash, msg.sender);
     }
@@ -34,8 +40,16 @@ contract RideRecords {
      * @param to The address of the new owner.
      */
     function transferVehicle(bytes32 serialHash, address to) public {
-        require(vehicleOwners[serialHash] == msg.sender, "Only owner can transfer");
-        require(to != address(0), "Cannot transfer to zero address");
+        address currentOwner = vehicleOwners[serialHash];
+        if (currentOwner == address(0)) {
+            revert VehicleAlreadyRegistered(serialHash);
+        }
+        if (currentOwner != msg.sender) {
+            revert OnlyOwnerCanTransfer(serialHash, currentOwner, msg.sender);
+        }
+        if (to == address(0)) {
+            revert CannotTransferToZeroAddress(serialHash);
+        }
         
         address from = msg.sender;
         vehicleOwners[serialHash] = to;

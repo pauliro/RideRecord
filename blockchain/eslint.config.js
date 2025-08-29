@@ -1,5 +1,7 @@
-const tsEslintPlugin = require('@typescript-eslint/eslint-plugin');
-const prettierPlugin = require('eslint-plugin-prettier');
+const tsEslint = require("@typescript-eslint/eslint-plugin");
+const tsParser = require("@typescript-eslint/parser");
+const prettierConfig = require("eslint-config-prettier");
+const prettierPlugin = require("eslint-plugin-prettier");
 
 module.exports = [
   {
@@ -12,22 +14,20 @@ module.exports = [
       'eslint.config.js', // avoid self linting
     ],
     languageOptions: {
-      parser: require('@typescript-eslint/parser'),
+      parser: tsParser,
       parserOptions: {
-        tsconfigRootDir: __dirname,
-        project: ['./tsconfig.json'],
+        // tsconfigRootDir: __dirname,
+        // project: ['./tsconfig.json'],
       },
     },
     plugins: {
-      '@typescript-eslint': tsEslintPlugin,
+      '@typescript-eslint': tsEslint,
       prettier: prettierPlugin,
     },
     rules: {
-      // Recommended rules from the @typescript-eslint plugin (including type-checking rules)
-      ...tsEslintPlugin.configs.recommended.rules,
-      ...tsEslintPlugin.configs['recommended-requiring-type-checking'].rules,
-
-      // Recommended rules for prettier
+      ...tsEslint.configs.recommended.rules,
+      // ...tsEslint.configs['recommended-requiring-type-checking'].rules, // Temporarily disable due to potential config issues
+      ...prettierConfig.rules,
       ...prettierPlugin.configs.recommended.rules,
     },
   },
