@@ -1,147 +1,132 @@
-# MultiBaas Sample App
+# RideRecords - Carfax on-chain for LATAM
 
-The purpose of this project is to demonstrate how to build a frontend-only decentralized application that uses [MultiBaas](https://docs.curvegrid.com/multibaas/) to handle the complexities of interacting with an EVM smart contract.
+A decentralized & tamper-evident history of used vehicles, built on Base, to reduce fraud and boost trust in P2P transactions.
 
-![Screenshot](screenshots/homepage.png)
+![RideRecords](screenshots/homepage.png)
+
+## Overview
+
+RideRecords is a web application that allows users to create a permanent, on-chain identity for a vehicle. Key events like registration and ownership transfer are anchored to the Base Sepolia blockchain, creating an immutable audit trail. The history is presented in a clean, easy-to-read timeline.
+
+## Features
+
+- **Vehicle Registration**: Register vehicles on-chain with VIN hashing for privacy
+- **Ownership Transfer**: Transfer vehicle ownership with immutable blockchain records
+- **Maintenance Records**: Add off-chain maintenance records with optional evidence uploads
+- **History Timeline**: View complete vehicle history with on-chain verification links
+- **Demo Mode**: Explore the app without connecting a wallet
 
 ## Quickstart Guide
 
+### Prerequisites
+
 You will need a few things to get started. Do this *before* running npm install.
 
-1. Go to [console.curvegrid.com](https://console.curvegrid.com), sign up, and create a MultiBaas deployment on your network of choice (use "Curvegrid Testnet" if unsure).
-2. Go to Admin > API Keys > New Key and create a key with label "sample_app_admin" and select "Administrators". Copy and save the **API key** and **deployment URL**.
-![Screenshot_2025-03-26_at_16_28_54](https://github.com/user-attachments/assets/367bdcbd-a8cc-4abd-9428-70cef637a740)
-3. Go to [cloud.reown.com](http://cloud.reown.com/), sign up, create a new project with name "Sample App", select product "Wallet Kit" and platform "JavaScript". Copy and save the **Project ID**.
-<img width="1624" alt="Screenshot_2025-03-26_at_16_40_00" src="https://github.com/user-attachments/assets/161e5136-6ec1-44f2-aacc-499ecabbb43c" />
+1. Go to [console.curvegrid.com](https://console.curvegrid.com), sign up, and create a MultiBaas deployment on Base Sepolia network.
+2. Go to Admin > API Keys > New Key and create a key with label "ride_records_admin" and select "Administrators". Copy and save the **API key** and **deployment URL**.
+3. Go to [cloud.reown.com](http://cloud.reown.com/), sign up, create a new project with name "RideRecords", select product "Wallet Kit" and platform "JavaScript". Copy and save the **Project ID**.
 
-
-Then run the installation and follow the steps as prompted:
+### Installation
 
 ```sh
-git clone https://github.com/curvegrid/multibaas-sample-app.git
+git clone <repository-url>
 cd multibaas-sample-app
 npm install
 ```
 
-## Overview
+Follow the prompts during installation to configure your MultiBaas deployment.
 
-The repository consists of two sub-projects:
-
-- The `blockchain` folder contains a [Hardhat](https://hardhat.org/) project that uses the [Hardhat MultiBaas Plugin](https://github.com/curvegrid/hardhat-multibaas-plugin) to compile the `SimpleVoting` smart contract, deploy it to the network, and link it to a MultiBaas deployment so that we can interact with it via the REST API.
-- The `frontend` folder contains a Next.js web application that provides a UI for interacting with the smart contract using the [MultiBaas SDK](https://github.com/curvegrid/multibaas-sdk-typescript).
-
-## MultiBaas Deployment Setup
-
-Using the [Curvegrid Console](https://console.curvegrid.com/), create a MultiBaas deployment on the Curvegrid Testnet. We recommend using this network for smart contract development due to its near-instant block finality and easily accessible faucet for account funding. It is also possible to use this demo app on any of our other supported networks but you will need tokens to deploy and interact with the smart contract.
-
-### Connecting to the Curvegrid Testnet
-
-Once you have created and logged into your MultiBaas Deployment, you may automatically configure your MetaMask to connect to the Curvegrid Test Network by clicking the `Select Signer` button in the top navbar and then clicking `Switch Network` button. Click the `Continue` button in `Add Network` modal. MetaMask will prompt you that MultiBaas is adding a network on your behalf. Review the details, click the `Approve` button, and then finally click the `Switch network` button.
-
-### Requesting Ether from the Faucet
-
-Via the top navbar, go to the `Blockchain > Faucet` page and request 1 ETH to your deployer account address.
-
-### Creating API Keys
-
-There are three API keys that **MUST** be created and used within this project. If you follow the installation script, you only need to provision an `Administrators` key and the others will be provisioned for you.
-
-Otherwise, navigate to the `Admin > API Keys` page and create new keys with the following parameters:
-
-1. Label `sample_app_admin`, Group `Administrators`. This API key has admin permission over the MultiBaas deployment, so copy it somewhere safe.
-
-2. Label `nextjs_frontend`, Group `DApp User`. This API key only has permission to read existing data on the blockchain, such as the state variables of a smart contract deployment, and to request MultiBaas to format and return an unsigned transaction for a specific interaction.
-
-3. For Curvegrid Testnet Only: Label `web3_proxy`, Option: `Use this key as a public Web3 key`. This API key will be used to construct an RPC URL for interacting with the Curvegrid Testnet. The UI will automatically construct and display the URL in the form of `https://<DEPLOYMENT ID>.multibaas.com/web3/<API KEY IN WEB3 GROUP>`, but copy and save just the API key part at the end.
-
-Please make sure not to mix up these API keys.
-
-### CORS
-
-For security reasons, your front end application needs permissions from the server to allow requests. If you follow the installation script, this will be done for you.
-
-Navigate to `Admin > CORS Origins` and add `http://localhost:3000` to the list of allowed origins. By default, MultiBaas does not allow unknown remote clients to make API requests, so by adding the URL above, you are giving permission to your local Next.js app to query MultiBaas. By default the frontend will run on port 3000, but if you are running another server it will increment to 3001 etc. so you may need to adjust your CORS settings accordingly.
-
-## Install dependencies
-
-You can run the installation and configure things manually by skipping the postinstall script. Otherwise, feel free to use the Quickstart Guide at the beginning of this document.
-
-```sh
-npm install
-```
-
-## Contract Deployment via Hardhat
-
-If you have not yet deployed the `SimpleVoting.sol` smart contract to your MultiBaas deployment, we will now do so using the Hardhat project.
+### Deploy Smart Contract
 
 ```sh
 cd blockchain
+npm run deploy:riderecords:dev
 ```
 
-The configuration is saved in `deployment-config.development.js`.
-
-If you did not run the installation, you can copy the template file to the configuration and fill in the fields manually:
-
-```sh
-cp deployment-config.template.js deployment-config.development.js
-```
-
-- `deployerPrivateKey`: The private key of your account with ETH on your target network, starting with `0x`. This key may be exported from MetaMask by clicking the `Account details` button in the menu of the account selector list, but please be sure only do this on a development-only account. It is strongly advised not to check it into source control.
-- `deploymentEndpoint`: Your MultiBaas Deployment URL, beginning with `https://` and ending with `.com`.
-- `ethChainID`: `2017072401` for Curvegrid Testnet otherwise find your chain ID on [chainlist.org](https://chainlist.org/).
-- `web3Key`: The Web3 Proxy API Key you previously created. Be sure to only include the API key and not the rest of the URL.
-- `rpcUrl`: The rpc URL to be used instead of the `web3Key` for networks other than Curvegrid Testnet. You should omit this field (leave it blank) if you are using the Curvegrid Testnet. If you are instead using another network, omit the `web3Key` and use an RPC URL from [ChainList](https://chainlist.org/).
-- `adminApiKey`: The API Key you previously created with label `sample_app_admin`.
-
-Finally, deploy the smart-contract:
-
-```sh
-npm run deploy:voting:dev
-```
-
-Navigate to your MultiBaas deployment and confirm that you can see the contract on the `Contracts > On-Chain` page.
-
-## Next.js Frontend
-
-Now, we will setup the frontend application to interact with MultiBaas. This application uses [RainbowKit](https://www.rainbowkit.com/docs/installation) to support interaction with a variety of wallets.
+### Run the Application
 
 ```sh
 cd frontend
-```
-
-The configuration is saved in `.env.development`.
-
-If you did not run the installation, you can copy the template file to the configuration and fill in the fields manually:
-
-```sh
-cp .env.template .env.development
-```
-
-You will need to fill in the following fields:
-- `NEXT_PUBLIC_RAINBOWKIT_PROJECT_ID`: Project ID of a WalletKit project on [reown](https://cloud.reown.com/).
-- `NEXT_PUBLIC_MULTIBAAS_DEPLOYMENT_URL`: Your MultiBaas deployment URL, beginning with `https://` and ending with `.com`.
-- `NEXT_PUBLIC_MULTIBAAS_DAPP_USER_API_KEY`: The Dapp User API Key.
-- `NEXT_PUBLIC_MULTIBAAS_WEB3_API_KEY` (For Curvegrid Testnet): The Web3 Proxy API Key.
-- `NEXT_PUBLIC_MULTIBAAS_VOTING_CONTRACT_LABEL`: 'simple_voting'
-- `NEXT_PUBLIC_MULTIBAAS_VOTING_ADDRESS_ALIAS`: 'simple_voting'
-- `NEXT_PUBLIC_MULTIBAAS_CHAIN_ID`: '2017072401' for Curvegrid Testnet otherwise the relevant [chain ID](https://chainlist.org/).
-
-Now, you should be able to run:
-
-```sh
 npm run dev
 ```
 
-and load the dApp in your browser at http://localhost:3000.
+The application will be available at http://localhost:3000.
 
-To interact with the smart contract, first connect your wallet using the RainbowKit button located in the top-right corner.
+## Architecture
 
-In the center of the page, you should see the different voting options as well as the number of votes for each option.
+### Smart Contract (`RideRecords.sol`)
 
-Hover over a voting option. If it turns green, clicking it will prompt you to sign a transaction to cast or change your vote to that option. If it turns red, clicking it will prompt you to sign a transaction to clear your existing vote.
+A minimal contract focused on anchoring key events:
 
-You can experiment with the smart contract by switching to different accounts in RainbowKit and casting additional votes. If you’re working on the project as a team, each member can configure their own `.env.development` to point to the same MultiBaas deployment URL.
+- `registerVehicle(bytes32 serialHash)`: Registers a new vehicle
+- `transferVehicle(bytes32 serialHash, address to)`: Transfers ownership
+- `getVehicleOwner(bytes32 serialHash)`: Gets current owner
 
-Since the `nextjs_frontend` and `web3_proxy` API keys have restricted permissions, they are safe to use directly in the frontend code even in production use cases. For these two API keys, the same values may be shared and used among team members.
+### Frontend
 
-However, since the `hardhat_admin` API key has admin-level permissions over the deployment, it is best practice for each team member to generate and securely store their own API key. It is strongly advised not to check it into source control.
+- **Next.js**: React framework with API routes
+- **MultiBaas SDK**: Blockchain interaction
+- **RainbowKit**: Wallet connection
+- **Tailwind CSS**: Styling
+
+### Backend (API Routes)
+
+- `POST /api/vehicles`: Register new vehicle
+- `GET /api/vehicles/[serialHash]`: Get vehicle details and history
+- `POST /api/vehicles/[serialHash]/events`: Add maintenance record
+- `POST /api/vehicles/[serialHash]/transfer`: Transfer ownership
+
+## Environment Variables
+
+Create a `.env.development` file in the `frontend` directory:
+
+```env
+NEXT_PUBLIC_RAINBOWKIT_PROJECT_ID=your_reown_project_id
+NEXT_PUBLIC_MULTIBAAS_DEPLOYMENT_URL=https://your-deployment.multibaas.com
+NEXT_PUBLIC_MULTIBAAS_DAPP_USER_API_KEY=your_dapp_user_api_key
+NEXT_PUBLIC_MULTIBAAS_WEB3_API_KEY=your_web3_api_key
+NEXT_PUBLIC_MULTIBAAS_RIDE_RECORDS_CONTRACT_LABEL=ride_records
+NEXT_PUBLIC_MULTIBAAS_RIDE_RECORDS_ADDRESS_ALIAS=ride_records
+NEXT_PUBLIC_MULTIBAAS_CHAIN_ID=84532
+```
+
+## Usage
+
+### Register a Vehicle
+
+1. Connect your wallet
+2. Fill in vehicle details (VIN, Make, Model, Year, Odometer)
+3. Submit the form to register on-chain
+4. View the vehicle's history timeline
+
+### Add Maintenance
+
+1. Navigate to a vehicle you own
+2. Click "Add Maintenance"
+3. Enter description and optionally upload evidence
+4. Submit to add to vehicle history
+
+### Transfer Ownership
+
+1. Navigate to a vehicle you own
+2. Click "Transfer Ownership"
+3. Enter recipient's wallet address
+4. Confirm the on-chain transfer
+
+### Demo Mode
+
+1. Click "Try Demo" on the welcome screen
+2. Explore the app with sample data
+3. No wallet connection required
+
+## Demo Script (90-Second Pitch)
+
+1. **(5s) Intro**: "This is RideRecords, a Carfax on-chain to fight fraud in the used car market."
+2. **(15s) Connect & Register**: "As a seller, I connect my wallet. I'll register my car by entering its details. The VIN is hashed for privacy, and we anchor it to the Base blockchain."
+3. **(20s) View History**: "Now, any potential buyer can see the vehicle's history. Here's the registration event, immutably stored on-chain. I'll add a quick maintenance record, like an oil change, which is added to its off-chain history."
+4. **(20s) Transfer**: "When I sell the car, I can transfer ownership directly on-chain. I'll enter the buyer's address... The timeline instantly updates with the new owner and another on-chain proof."
+5. **(10s) Conclusion**: "By combining a fast off-chain database with the security of on-chain anchors, RideRecords creates a trusted, transparent, and fraud-resistant history for every vehicle."
+
+## License
+
+MIT License - see LICENSE file for details.
